@@ -26,7 +26,7 @@ Run it with an alias
 Add this to your .bashrc or zshrc 
 
 ```
-alias symfony-phpunit="sudo docker run -t -i  --volume=\$PWD:/var/www agallou/symfony-phpunit \$@"
+alias symfony-phpunit="docker run -t -i  --volume=\$PWD:/var/www agallou/symfony-phpunit \$@"
 ```
 
 Then simply run ```symfony-phpunit``` inside your symfony directory.
