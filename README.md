@@ -11,6 +11,7 @@ After preparing the symfony project :
 ```
 git clone https://github.com/symfony/symfony.git && cd symfony
 composer install
+```
 
 You can launch the PHPUnit test suite like this :
 
