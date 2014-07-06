@@ -6,8 +6,15 @@ Run your Symfony test suite inside a Docker container.
 How to run the test suite
 -------------------------
 
+After preparing the symfony project :
+
 ```
 git clone https://github.com/symfony/symfony.git && cd symfony
+composer install
+
+You can launch the PHPUnit test suite like this :
+
+```
 docker run -t -i  --volume=$PWD:/var/www agallou/symfony-phpunit
 ```
 
