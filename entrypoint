@@ -1,3 +1,7 @@
 #!/bin/bash
-exec >/dev/tty 2>/dev/tty </dev/tty && /.composer/vendor/bin/phpunit $@
+cp /var/www/phpunit.xml.dist /tmp/phpunit.xml.dist
+php /usr/local/bin/add_exclude_tests.php /tmp/phpunit.xml.dist
+sed --in-place "s/autoload.php.dist/\/var\/www\/autoload.php.dist/" /tmp/phpunit.xml.dist
+sed --in-place "s/\.\/src/\/var\/www\/src/g" /tmp/phpunit.xml.dist
+exec >/dev/tty 2>/dev/tty </dev/tty && /.composer/vendor/bin/phpunit --configuration /tmp/phpunit.xml.dist $@
 

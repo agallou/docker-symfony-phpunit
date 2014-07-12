@@ -75,6 +75,9 @@ RUN echo 'allow_url_fopen=1' >> /etc/php5/cli/php.ini
 
 USER tests
 
+ADD add_exclude_tests.php /usr/local/bin/add_exclude_tests.php
+
+
 WORKDIR /var/www
 VOLUME ["/var/www"]
 
