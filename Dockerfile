@@ -74,6 +74,7 @@ USER tests
 WORKDIR /var/www
 VOLUME ["/var/www"]
 
+ADD entrypoint /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["--exclude-group", "benchmark"]
-ENTRYPOINT ["/.composer/vendor/bin/phpunit"]
 
