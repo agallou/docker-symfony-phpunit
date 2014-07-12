@@ -4,9 +4,15 @@ ENV DEBIAN_FRONTEND noninteractive
  
 RUN apt-get update -y
 RUN apt-get install -y \
- curl \
- php5-cli php5-json php5-curl
+ curl 
 
+RUN echo "deb http://packages.dotdeb.org wheezy-php55 all" >> /etc/apt/sources.list
+RUN echo "deb-src http://packages.dotdeb.org wheezy-php55 all" >> /etc/apt/sources.list 
+RUN curl http://www.dotdeb.org/dotdeb.gpg > /root/dotdeb.gpg
+RUN apt-key add /root/dotdeb.gpg
+
+RUN apt-get update
+RUN apt-get install -y php5-cli
 
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
@@ -32,14 +38,14 @@ RUN cd /root && tar -zxf icu4c-51_2-src.tgz
 RUN cd /root/icu/source/ && ./configure && make && make install
 
 RUN apt-get install -y php-pear php5-dev
-#RUN pear install pecl
 RUN pecl update-channels
-
-
-RUN apt-get install -y php5-intl 
-RUN apt-get install -y php-apc 
+RUN pecl install intl-3.0.0
 
 RUN echo 'date.timezone = Europe/Paris' >> /etc/php5/cli/php.ini
+RUN echo 'extension=intl.so' >> /etc/php5/cli/php.ini
+RUN echo 'intl.error_level=0' >> /etc/php5/cli/php.ini
+RUN echo 'intl.default_locale=en' >> /etc/php5/cli/php.ini
+RUN echo 'intl.use_exceptions=0' >>  /etc/php5/cli/php.ini
 
 
 #permet de faire fonctionner testDumpNumericValueWithLocale
@@ -55,8 +61,6 @@ USER tests
 WORKDIR /var/www
 VOLUME ["/var/www"]
 
-
 CMD ["--exclude-group", "benchmark"]
-
 ENTRYPOINT ["/.composer/vendor/bin/phpunit"]
 
