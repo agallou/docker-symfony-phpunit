@@ -56,6 +56,19 @@ RUN sed -i "s/^# fr_FR/fr_FR/" /etc/locale.gen
 RUN locale-gen
 RUN update-locale LANG=fr_FR.UTF-8
 
+#permet de lancer Symfony\Component\HttpFoundation\Tests\Session\Storage\Handler\MemcacheSessionHandlerTest
+RUN echo 'deb http://packages.dotdeb.org wheezy all' >> /etc/apt/sources.list
+RUN echo 'deb-src http://packages.dotdeb.org wheezy all' >> /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get install -y php5-memcached
+
+#permet de lancer src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/MemcacheSessionHandlerTest.php
+RUN apt-get install -y php5-memcache
+
+#permet de lancer src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/MongoDbSessionHandlerTest.php
+RUN apt-get install -y php5-mongo
+
+
 USER tests
 
 WORKDIR /var/www
