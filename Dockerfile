@@ -68,6 +68,10 @@ RUN apt-get install -y php5-memcache
 #permet de lancer src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/MongoDbSessionHandlerTest.php
 RUN apt-get install -y php5-mongo
 
+#permet de faire fonctionner ces tests : 
+# src/Symfony/Component/Finder/Tests/Iterator/RecursiveDirectoryIteratorTest.php
+# src/Symfony/Component/Finder/Tests/FinderTest.php
+RUN echo 'allow_url_fopen=1' >> /etc/php5/cli/php.ini
 
 USER tests
 
