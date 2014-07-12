@@ -1,7 +1,14 @@
 #!/bin/bash
+/usr/bin/mongod --config /etc/mongod.conf &
+while ! nc -vz localhost 27017 >/dev/null 2>&1 ; do
+  sleep 1;
+done
+
+#exec >/dev/tty 2>/dev/tty </dev/tty && su tests -c /usr/local/bin/exec_tests
 cp /var/www/phpunit.xml.dist /tmp/phpunit.xml.dist
 php /usr/local/bin/add_exclude_tests.php /tmp/phpunit.xml.dist
 sed --in-place "s/autoload.php.dist/\/var\/www\/autoload.php.dist/" /tmp/phpunit.xml.dist
 sed --in-place "s/\.\/src/\/var\/www\/src/g" /tmp/phpunit.xml.dist
-exec >/dev/tty 2>/dev/tty </dev/tty && /.composer/vendor/bin/phpunit --configuration /tmp/phpunit.xml.dist $@
+CMD="/.composer/vendor/bin/phpunit --configuration /tmp/phpunit.xml.dist $@"
+exec >/dev/tty 2>/dev/tty </dev/tty && su tests -c "$CMD"
 

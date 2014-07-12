@@ -65,10 +65,6 @@ $excludedFiles = array(
     './src/Symfony/Component/HttpFoundation/Tests/Session/Storage/PhpBridgeSessionStorageTest.php',
     './src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Proxy/AbstractProxyTest.php',
 
-    //installer mongoDb pour faire tourner le test
-    './src/Symfony/Component/HttpKernel/Tests/Profiler/MongoDbProfilerStorageTest.php',
-    './src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/MongoDbSessionHandlerTest.php',
-
     //Pas de constante PHP_BINARY alors qu'on est en 5.5 et qu'elle se trouve à partir de 5.4 ?
     './src/Symfony/Component/Process/Tests/PhpExecutableFinderTest.php',
 

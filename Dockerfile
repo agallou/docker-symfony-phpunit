@@ -67,13 +67,23 @@ RUN apt-get install -y php5-memcache
 
 #permet de lancer src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/MongoDbSessionHandlerTest.php
 RUN apt-get install -y php5-mongo
+RUN mkdir -p /data/db
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+RUN echo 'deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen' | tee /etc/apt/sources.list.d/10gen.list
+RUN apt-get update
+RUN apt-get install -y -q mongodb-org
+RUN sed --in-place "/bind_ip/d" /etc/mongod.conf
+RUN echo 'nojournal = true' >> /etc/mongod.conf
+RUN apt-get install -y netcat
+RUN usermod -a -G mongodb tests
+RUN chmod 777 /var/log/mongodb
+
 
 #permet de faire fonctionner ces tests : 
 # src/Symfony/Component/Finder/Tests/Iterator/RecursiveDirectoryIteratorTest.php
 # src/Symfony/Component/Finder/Tests/FinderTest.php
 RUN echo 'allow_url_fopen=1' >> /etc/php5/cli/php.ini
 
-USER tests
 
 ADD add_exclude_tests.php /usr/local/bin/add_exclude_tests.php
 
