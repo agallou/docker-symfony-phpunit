@@ -79,10 +79,28 @@ RUN usermod -a -G mongodb tests
 RUN chmod 777 /var/log/mongodb
 
 
-#permet de faire fonctionner ces tests : 
-# src/Symfony/Component/Finder/Tests/Iterator/RecursiveDirectoryIteratorTest.php
-# src/Symfony/Component/Finder/Tests/FinderTest.php
-RUN echo 'allow_url_fopen=1' >> /etc/php5/cli/php.ini
+# permet de faire fonctionner ces tests : 
+#   src/Symfony/Component/Finder/Tests/Iterator/RecursiveDirectoryIteratorTest.php
+#   src/Symfony/Component/Finder/Tests/FinderTest.php
+# parfois ils échouent car le ftp inacessible
+# on va donc faire pointer ftp.mozilla.org vers un ftp local
+# où se trouvera la même structure de fichiers
+RUN echo '127.0.0.1 ftp.mozilla.org' > /tmp/hosts
+RUN mkdir -p -- /lib-override && cp /lib/x86_64-linux-gnu/libnss_files.so.2 /lib-override
+RUN perl -pi -e 's:/etc/hosts:/tmp/hosts:g' /lib-override/libnss_files.so.2
+ENV LD_LIBRARY_PATH /lib-override
+RUN apt-get install -y vsftpd
+RUN apt-get install -y telnet
+RUN apt-get install -y ftp
+RUN mkdir /tmp/ftp
+RUN mkdir /tmp/ftp_chroot
+RUN echo 'secure_chroot_dir=/tmp/ftp_chroot' >> /etc/vsftpd.conf
+RUN echo 'local_enable=NO' >> /etc/vsftpd.conf
+RUN echo 'write_enable=NO' >> /etc/vsftpd.conf
+RUN echo 'anon_root=/tmp/ftp' >> /etc/vsftpd.conf
+RUN touch /tmp/ftp/README
+RUN touch /tmp/ftp/index.html
+RUN touch /tmp/ftp/pub
 
 
 ADD add_exclude_tests.php /usr/local/bin/add_exclude_tests.php
