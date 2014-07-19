@@ -19,16 +19,15 @@ RUN mv composer.phar /usr/local/bin/composer
 
 RUN composer global require 'phpunit/phpunit=4.1.*'
 
-
-#Les tests sur le finder (et notamment testIgnoredAccessDeniedException et testAccessDeniedException)
-#ne peuvent être lancés en root
+# Finder tests (eg testIgnoredAccessDeniedException and testAccessDeniedException)
+# can't be run as root
 RUN useradd tests
 
-#permet de lancer ProfilerTest
+# Allows to run ProfilerTest
 RUN apt-get install -y php5-sqlite
 
 
-#permet de faire fonctionner src/Symfony/Component/Process/Tests/SimpleProcessTest.php ::testSignal
+# Allows to run SimpleProcessTest#testSignal
 RUN sed --in-place '/disable_functions/d' /etc/php5/cli/php.ini
 
 RUN apt-get install -y wget build-essential
@@ -48,24 +47,20 @@ RUN echo 'intl.default_locale=en' >> /etc/php5/cli/php.ini
 RUN echo 'intl.use_exceptions=0' >>  /etc/php5/cli/php.ini
 
 
-#permet de faire fonctionner testDumpNumericValueWithLocale
-#Symfony\Component\Yaml\Tests\InlineTest
+# Allows to run Symfony\Component\Yaml\Tests\InlineTest#testDumpNumericValueWithLocale
 RUN apt-get install -y locales
 RUN cat /etc/locale.gen
 RUN sed -i "s/^# fr_FR/fr_FR/" /etc/locale.gen
 RUN locale-gen
 RUN update-locale LANG=fr_FR.UTF-8
 
-#permet de lancer Symfony\Component\HttpFoundation\Tests\Session\Storage\Handler\MemcacheSessionHandlerTest
+# Allows to run MemcacheSessionHandlerTest
 RUN echo 'deb http://packages.dotdeb.org wheezy all' >> /etc/apt/sources.list
 RUN echo 'deb-src http://packages.dotdeb.org wheezy all' >> /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get install -y php5-memcached
 
-#permet de lancer src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/MemcacheSessionHandlerTest.php
-RUN apt-get install -y php5-memcache
-
-#permet de lancer src/Symfony/Component/HttpFoundation/Tests/Session/Storage/Handler/MongoDbSessionHandlerTest.php
+# Allows to run MongoDbSessionHandlerTest
 RUN apt-get install -y php5-mongo
 RUN mkdir -p /data/db
 RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
@@ -78,13 +73,11 @@ RUN apt-get install -y netcat
 RUN usermod -a -G mongodb tests
 RUN chmod 777 /var/log/mongodb
 
-
-# permet de faire fonctionner ces tests : 
+# Allows to run the following tests:
 #   src/Symfony/Component/Finder/Tests/Iterator/RecursiveDirectoryIteratorTest.php
 #   src/Symfony/Component/Finder/Tests/FinderTest.php
-# parfois ils échouent car le ftp inacessible
-# on va donc faire pointer ftp.mozilla.org vers un ftp local
-# où se trouvera la même structure de fichiers
+# Tests sometimes fail because ftp.mozilla.org is unavailable, so we just
+# point it to our local ftp server and reproduce the same directory/file structure
 RUN echo '127.0.0.1 ftp.mozilla.org' > /tmp/hosts
 RUN mkdir -p -- /lib-override && cp /lib/x86_64-linux-gnu/libnss_files.so.2 /lib-override
 RUN perl -pi -e 's:/etc/hosts:/tmp/hosts:g' /lib-override/libnss_files.so.2
@@ -112,4 +105,3 @@ VOLUME ["/var/www"]
 ADD entrypoint /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["--exclude-group", "benchmark"]
-
